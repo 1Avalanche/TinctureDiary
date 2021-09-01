@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.avalanche.android.tincturediary.model.Ingredient
+import com.avalanche.android.tincturediary.ui.components.IngredientView
 
 
 class EditRecipeScreenViewModel : ViewModel() {
@@ -20,7 +21,8 @@ class EditRecipeScreenViewModel : ViewModel() {
     private var _stageCouter: MutableLiveData<Int> = MutableLiveData(1)
     var stageCounter: LiveData<Int> = _stageCouter
 
-    var ingrList = mutableListOf<Ingredient>()
+    var ingrList = MutableLiveData(mutableListOf(Ingredient("", "")))
+//    var ingrMap = mutableMapOf<String, String>()
 
     fun addBase() {
         var newCount = baseCounter.value as Int
@@ -29,25 +31,31 @@ class EditRecipeScreenViewModel : ViewModel() {
     }
 
     fun addIngr() {
+        ingrList.value!!.add(Ingredient("", ""))
         var newCount = ingrCounter.value as Int
         newCount++
         _ingrCouter.postValue(newCount)
     }
 
-    fun removeIngr() {
-        if (ingrCounter.value == 0) return
-        else {
-            var newCount = ingrCounter.value as Int
-            newCount--
-            _ingrCouter.postValue(newCount)
-        }
+    fun removeIngr(index: Int) { //TODO//
+//        ingrList.value!!.removeIf { it.title == title }
+        var newIngrList = ingrList.value!!
+        newIngrList.removeAt(index)
+        ingrList.postValue(newIngrList)
+        var newCount = newIngrList.size
+//        ingrList.value!!.removeAt(index)
+//        var newCount = ingrList.value!!.size
+        ingrList.postValue(newIngrList)
+        _ingrCouter.postValue(newCount)
     }
+
 
     fun addStage() {
         var newCount = stageCounter.value as Int
         newCount++
         _stageCouter.postValue(newCount)
     }
+
     fun removeStage() {
         if (stageCounter.value == 0) return
         else {
@@ -57,20 +65,19 @@ class EditRecipeScreenViewModel : ViewModel() {
         }
     }
 
-//    fun takeIngredients(title:String, weight: String) : List<Ingredient> {
-//        var newIngr = Ingredient(title, weight)
-//        ingrList.add(newIngr)
-//        Log.d("INGR", "Last ingr is ${ingrList[ingrList.lastIndex].title}")
-//        return ingrList
-//
+//    fun save() {
+//        for ((k,v) in ingrMap) {
+//            var i = Ingredient(k,v)
+//            ingrList.add(i)
+//        }
 //    }
 
-    fun takeIngredients(i: Ingredient) {
-        ingrList.add(i)
-        Log.d("INGR", "Last ingr is ${ingrList[ingrList.lastIndex].title}")
-        return
-    }
-
+//    fun takeIngredients(title:String, weight: String) {
+//        var newIngr = Ingredient(title, weight)
+//        ingrList.value!!.add(newIngr)
+//        Log.d("ING", "Ing $title was added")
+//
+//    }
 
 
 }

@@ -18,33 +18,39 @@ import com.avalanche.android.tincturediary.model.Ingredient
 import com.avalanche.android.tincturediary.ui.screens.editRecipe.EditRecipeScreenViewModel
 
 @Composable
-fun Ingredient(viewModel: EditRecipeScreenViewModel = viewModel()) {
+fun IngredientView(viewModel: EditRecipeScreenViewModel = viewModel(), title: String, weight: String, i: Int) {
 
-    var text by remember { mutableStateOf("") }
-    var weight by remember { mutableStateOf("") }
+    val lastIndex by remember { mutableStateOf(viewModel.ingrList.value!!.lastIndex) }
+
+    var titleValue by remember { mutableStateOf(title) }
+    var weightValue by remember { mutableStateOf(weight) }
+    val index by remember { mutableStateOf(i)}
+
     Row(modifier = Modifier
         .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween) {
         TextField(
-            value = text,
-            onValueChange = {text = it},
+            value = titleValue,
+            onValueChange = {titleValue= it},
             modifier = Modifier
                 .weight(0.6f)
                 .padding(4.dp),
             placeholder = { Text("название") }
         )
+        viewModel.ingrList.value!![index].title = titleValue
         TextField(
-            value = weight,
-            onValueChange = {weight = it},
+            value = weightValue,
+            onValueChange = {weightValue = it},
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier
                 .weight(0.25f)
                 .padding(4.dp),
             placeholder = { Text("вес") }
         )
+        viewModel.ingrList.value!![index].weight = weightValue
         Button(onClick = {
-            viewModel.removeIngr() },
+            viewModel.removeIngr(1) },
             modifier = Modifier.weight(0.15f)) {
             Text("X")
         }

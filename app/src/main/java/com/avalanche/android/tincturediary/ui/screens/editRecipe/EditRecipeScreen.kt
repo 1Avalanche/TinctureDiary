@@ -98,7 +98,9 @@ fun Toolbar(editRecipeScreenViewModel: EditRecipeScreenViewModel) {
         Button(onClick = {/*TODO*/ }) {
             Text("Prev")
         }
-        Button(onClick = {/*TODO*/}) {
+        Button(onClick = {
+            Log.d("ING", "List size is ${editRecipeScreenViewModel.ingrList.value!!.size} The 1 ingr is ${editRecipeScreenViewModel.ingrList.value!![0].title}, the 2 is ${editRecipeScreenViewModel.ingrList.value!![1].title}, the 3 is ${editRecipeScreenViewModel.ingrList.value!![2].title}")
+        }) {
             Text(text = "Save")
         }
     }

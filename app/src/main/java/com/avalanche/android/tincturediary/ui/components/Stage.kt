@@ -10,14 +10,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import com.avalanche.android.tincturediary.ui.screens.editRecipe.EditRecipeScreenViewModel
-import com.avalanche.android.tincturediary.ui.components.Ingredient
+import com.avalanche.android.tincturediary.ui.components.IngredientView
 
 @Composable
-fun Stage(num: Int, viewModel: EditRecipeScreenViewModel, isRemovable: Boolean) : List<String> {
+fun Stage(num: Int, viewModel: EditRecipeScreenViewModel, isRemovable: Boolean) {
 
     val ingredients by viewModel.ingrCounter.observeAsState()
     var text by remember { mutableStateOf("") }
-    var tempList = mutableListOf<String>()
+//    var ingrList by remember { mutableStateOf(viewModel.ingrList)}
+    val ingrList by viewModel.ingrList.observeAsState()
+
 
     Column {
         Row(modifier = Modifier.fillMaxWidth(),
@@ -34,7 +36,7 @@ fun Stage(num: Int, viewModel: EditRecipeScreenViewModel, isRemovable: Boolean) 
         )
         Text("Ингредиенты")
         for (i in 0 until ingredients!! ) {
-            Ingredient()
+            IngredientView(viewModel, ingrList!![i].title , ingrList!![i].weight, i)
         }
         Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
@@ -67,5 +69,4 @@ fun Stage(num: Int, viewModel: EditRecipeScreenViewModel, isRemovable: Boolean) 
                 .background(MaterialTheme.colors.onError, RectangleShape))
         }
     }
-    return tempList
 }
