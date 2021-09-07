@@ -40,10 +40,8 @@ fun EditRecipeScreen(editRecipeScreenViewModel: EditRecipeScreenViewModel = view
         .wrapContentHeight()) {
 
         val recipe by editRecipeScreenViewModel.recipe.observeAsState()
-        val stagesList by editRecipeScreenViewModel.stagesList.observeAsState()
-        val stages by editRecipeScreenViewModel.stageCounter.observeAsState()
         var text by remember { mutableStateOf(recipe!!.title) }
-//        var counter by remember { mutableStateOf(0) }
+        var finalRecipe by remember { mutableStateOf(editRecipeScreenViewModel.finalRecipe) }
 
         LazyColumn(
             modifier = Modifier.fillMaxSize())
@@ -57,6 +55,7 @@ fun EditRecipeScreen(editRecipeScreenViewModel: EditRecipeScreenViewModel = view
                     onValueChange = { text = it
                     },
                     label = { Text("Название") } )
+                editRecipeScreenViewModel.finalRecipe.title = text
             }
             item {
                 Row(verticalAlignment = Alignment.CenterVertically,
@@ -65,30 +64,24 @@ fun EditRecipeScreen(editRecipeScreenViewModel: EditRecipeScreenViewModel = view
                 }
             }
             item{
-                Column(modifier = Modifier
-                    .wrapContentHeight()
-                    .fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center) {
                     for (i in 0 until recipe!!.listOfAlcoholBase.size) {
                         var isRemovable = if (i == recipe!!.listOfAlcoholBase.size - 1) true else false
                         AlcoholBaseView(
                             editRecipeScreenViewModel,
-                            recipe!!.listOfAlcoholBase!![i].title,
-                            recipe!!.listOfAlcoholBase!![i].volume!!,
-                            recipe!!.listOfAlcoholBase!![i].strength!!,
+                            finalRecipe.listOfAlcoholBase[i]!!.title,
+                            finalRecipe.listOfAlcoholBase[i]!!.volume,
+                            finalRecipe.listOfAlcoholBase[i]!!.strength,
                             i,
                             isRemovable
                         )
                     }
-                }
             }
             item{
                 Row(modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center) {
                     Button(onClick = {
                         editRecipeScreenViewModel.addBase()
-                        Log.d("BASE", "Recipe bases is ${recipe!!.listOfAlcoholBase.size}")
-//                        counter++
+                        editRecipeScreenViewModel.baseSizeCounter++
                     } ) {
                         Text("Добавить основу")
                     }
@@ -96,13 +89,13 @@ fun EditRecipeScreen(editRecipeScreenViewModel: EditRecipeScreenViewModel = view
             }
             item {
                 Column(modifier = Modifier.fillMaxWidth()) {//problem
-                    for (i in 0 until stages!!) {
-                        var isRemovable = if (i == stages!! - 1) false else true
+                    for (i in 0 until recipe!!.listOfStages.size) {
+                        var isRemovable = if (i == recipe!!.listOfStages.size - 1) false else true
                         StageView(
                             editRecipeScreenViewModel,
                             i + 1,
-                            stagesList!![i].description,
-                            stagesList!![i].expirationDate,
+                            recipe!!.listOfStages!![i].description,
+                            recipe!!.listOfStages!![i].expirationDate,
                             isRemovable
                         )
                     }
@@ -118,10 +111,9 @@ fun EditRecipeScreen(editRecipeScreenViewModel: EditRecipeScreenViewModel = view
                     }
                 }
             }
-            item {isFinished()}
+            item {isFinished(editRecipeScreenViewModel)}
         }
     }
-
 }
 
 @Composable
@@ -136,14 +128,32 @@ fun Toolbar(editRecipeScreenViewModel: EditRecipeScreenViewModel) {
             Text("Prev")
         }
         Button(onClick = {
-            var str = ""
+            var bases = ""
             for (base in editRecipeScreenViewModel.finalRecipe.listOfAlcoholBase) {
-                str = str + base.title + ", "
+                bases = bases + base.title + ", "
             }
+            var s1i = ""
+            for (ing in editRecipeScreenViewModel.finalRecipe.listOfStages[0].listOfIngredients) {
+                s1i = s1i + ing.title + ", "
+            }
+            var s2i = ""
+            for (ing in editRecipeScreenViewModel.finalRecipe.listOfStages[1].listOfIngredients) {
+                s2i = s2i + ing.title + ", "
+            }
+            var fin = if(editRecipeScreenViewModel.isFinished) "is finished" else "is not finished"
 //            Log.d("ING", "stagemap, s1, ings is ${editRecipeScreenViewModel.stagesMap.value!![1]!![0].title} ${editRecipeScreenViewModel.stagesMap.value!![1]!![1].title} ${editRecipeScreenViewModel.stagesMap.value!![1]!![2].title}")
-            Log.d("ING", "FULL Rp title ${editRecipeScreenViewModel.fullRecipe.title}, Bases  ${editRecipeScreenViewModel.recipe.value!!.listOfAlcoholBase.size} , AB1: ${editRecipeScreenViewModel.recipe.value!!.listOfAlcoholBase[0].title} - AB2 ${editRecipeScreenViewModel.recipe.value!!.listOfAlcoholBase[1].title} ")
-            Log.d("ING", "FINAL Rp title ${editRecipeScreenViewModel.finalRecipe.title}, Bases ${editRecipeScreenViewModel.finalRecipe.listOfAlcoholBase.size} bases: $str " )
-            })
+            Log.d("FINAL", "FINAL Rp: ${editRecipeScreenViewModel.finalRecipe.title} " +
+                    "\n has ${editRecipeScreenViewModel.finalRecipe.listOfAlcoholBase.size} alcohol bases:" +
+                    "\n $bases." +
+                    "\n and ${editRecipeScreenViewModel.finalRecipe.listOfStages.size} stages." +
+                    "\n Stage 1 contains: $s1i," +
+                    "\n with description: ${editRecipeScreenViewModel.finalRecipe.listOfStages[0].description}" +
+                    "\n Stage 2 contains: $s2i," +
+                    "\n with description: ${editRecipeScreenViewModel.finalRecipe.listOfStages[1].description}." +
+                    "\n This recipe $fin" )
+            Log.d("ING", "FINAL ingrs in S1 is $s2i" )
+
+        })
         { Text(text = "Save")
         }
     }
@@ -152,17 +162,18 @@ fun Toolbar(editRecipeScreenViewModel: EditRecipeScreenViewModel) {
 
 
 @Composable
-fun isFinished() {
-        var onCheckedChange: ((Boolean) -> Unit)? = null
+fun isFinished(viewModel: EditRecipeScreenViewModel) {
+    var isChecked by remember { mutableStateOf(false) }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Напиток закончен")
             Checkbox(
-                checked = false,
-                onCheckedChange = onCheckedChange
+                checked = isChecked,
+                onCheckedChange = { isChecked = it }
             )
         }
+    viewModel.isFinished = isChecked
     }
 

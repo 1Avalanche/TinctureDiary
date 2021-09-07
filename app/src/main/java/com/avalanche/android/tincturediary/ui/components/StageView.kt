@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import com.avalanche.android.tincturediary.model.Ingredient
+import com.avalanche.android.tincturediary.model.RecipePreparation
 import com.avalanche.android.tincturediary.model.Stage
 import com.avalanche.android.tincturediary.ui.screens.editRecipe.EditRecipeScreenViewModel
 import com.avalanche.android.tincturediary.ui.components.IngredientView
@@ -23,10 +24,9 @@ fun StageView(
     expDate: String,
     isRemovable: Boolean) {
 
-    var description by remember { mutableStateOf(description) }
+    val recipe by viewModel.recipe.observeAsState()
     var number by remember {mutableStateOf(num)}
-    val stagesMap by viewModel.stagesMap.observeAsState()
-    var counter by remember { mutableStateOf(0) }
+    var description by remember { mutableStateOf(description) }
 
         Column {
 
@@ -35,7 +35,6 @@ fun StageView(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
             Text("Фаза $num")
-            Text("added $counter ingredients")
                 Button(
                     onClick = { viewModel.removeStage() },
                     enabled = isRemovable
@@ -50,12 +49,12 @@ fun StageView(
 
             Text("Ингредиенты")
             Column(modifier = Modifier.fillMaxWidth()) {
-                for (i in 0 until stagesMap!![number]!!.size) {
-                    var isRemovable = if (i == stagesMap!![number]!!.size - 1) true else false
+                for (i in 0 until recipe!!.listOfStages[number-1].listOfIngredients.size) {
+                    var isRemovable = if (i == recipe!!.listOfStages[number-1].listOfIngredients.size - 1) true else false
                     IngredientView(
                         viewModel,
-                        stagesMap!![number]!![i].title,
-                        stagesMap!![number]!![i].weight,
+                        recipe!!.listOfStages[number-1].listOfIngredients[i].title,
+                        recipe!!.listOfStages[number-1].listOfIngredients[i].weight,
                         number,
                         i,
                         isRemovable
@@ -68,15 +67,6 @@ fun StageView(
             ) {
                 Button(onClick = {
                     viewModel.addIngr(number)
-                    counter++
-                    Log.d(
-                        "ADD",
-                        "Recipe, stage 1, ingr list size ${viewModel.recipe.value!!.listOfStages[0].listOfIngredients.size} "
-                    )
-                    Log.d(
-                        "ADD",
-                        "Map, stage 1, ingr list size ${viewModel.stagesMap.value!![1]!!.size} "
-                    )
                 }) {
                     Text("Добавить ингредиент")
                 }
@@ -95,6 +85,7 @@ fun StageView(
                         .padding(4.dp),
                     placeholder = { Text("введите описание приготовления") }
                 )
+                viewModel.finalRecipe.listOfStages[number-1].description = description
             }
             Row(
                 modifier = Modifier

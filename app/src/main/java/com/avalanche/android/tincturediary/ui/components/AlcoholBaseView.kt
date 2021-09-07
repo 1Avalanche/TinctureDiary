@@ -7,6 +7,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -18,18 +19,18 @@ import com.avalanche.android.tincturediary.ui.screens.editRecipe.EditRecipeScree
 @Composable
 fun AlcoholBaseView(
     viewModel: EditRecipeScreenViewModel = viewModel(),
-    name: String,
-    vol:String,
+    title: String,
+    vol: String,
     str: String,
     i: Int,
     isRemovable: Boolean) {
 
-    var name by remember { mutableStateOf(name ) }
+    val recipe = viewModel.recipe.value
+    var name by remember { mutableStateOf(title ) }
     var volume by remember { mutableStateOf(vol) }
     var strenght by remember { mutableStateOf(str) }
     var index by remember { mutableStateOf(i) }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
@@ -73,7 +74,9 @@ fun AlcoholBaseView(
 
                 }
             }
-            viewModel.replaseBaseName(index, name, volume, strenght)
+            viewModel.collectBaseToFinal(index, name, volume, strenght)
         }
-    }
+//    viewModel.recipe.value!!.listOfAlcoholBase[i].title = name
+//    viewModel.recipe.value!!.listOfAlcoholBase[i].volume = volume
+//    viewModel.recipe.value!!.listOfAlcoholBase[i].strength = strenght
 }

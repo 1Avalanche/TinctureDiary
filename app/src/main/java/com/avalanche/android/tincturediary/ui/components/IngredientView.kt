@@ -53,7 +53,7 @@ fun IngredientView(
             )
         if (isRemovable) {
             Button(onClick = {
-            viewModel.removeIngr()
+            viewModel.removeIngr(number)
             },
             modifier = Modifier.weight(0.15f)) {
             Text("X")
@@ -63,10 +63,6 @@ fun IngredientView(
 
             }
         }
+        viewModel.collectIngrsToFinal(number, index, titleValue, weightValue)
     }
-sendIngrs(viewModel, number, index, titleValue, weightValue)
-}
-
-fun sendIngrs(viewModel: EditRecipeScreenViewModel, stageNum: Int, index: Int, title: String, weight: String) {
-
 }
