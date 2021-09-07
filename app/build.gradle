@@ -62,6 +62,9 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07'
 
     // Integration with observables
+//    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+//    implementation "androidx.compose.runtime:runtime:$compose_version"
+//    implementation "androidx.compose.runtime:runtime-rxjava2:$compose_version"
     implementation 'androidx.compose.runtime:runtime-livedata:1.1.0-alpha02'
     implementation 'androidx.compose.runtime:runtime:1.1.0-alpha02'
     implementation 'androidx.compose.runtime:runtime-rxjava2:1.1.0-alpha02'

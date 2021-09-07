@@ -1,10 +1,11 @@
 package com.avalanche.android.tincturediary.model
 
 data class RecipePreparation(
-    var title: String,
-    var listOfAlcoholBase: List<AlcoholBase>,
-    var listOfStages: List<Stage>,
-    var isFinished: Boolean,
-    var finishedVolume: Float
+    val id: Int,
+    val title: String,
+    val listOfAlcoholBase: List<AlcoholBase>,
+    val listOfStages: List<Stage>,
+    val isFinished: Boolean,
 ) {
+//    var finishedVolume: Float
 }
