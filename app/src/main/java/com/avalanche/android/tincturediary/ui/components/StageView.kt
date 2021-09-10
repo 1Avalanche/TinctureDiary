@@ -1,5 +1,7 @@
 package com.avalanche.android.tincturediary.ui.components
 
+import android.app.DatePickerDialog
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,14 +17,17 @@ import com.avalanche.android.tincturediary.model.RecipePreparation
 import com.avalanche.android.tincturediary.model.Stage
 import com.avalanche.android.tincturediary.ui.screens.editRecipe.EditRecipeScreenViewModel
 import com.avalanche.android.tincturediary.ui.components.IngredientView
+import com.avalanche.android.tincturediary.ui.components.DatePickerView
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Composable
-fun StageView(
-    viewModel: EditRecipeScreenViewModel,
-    num: Int,
-    description: String,
-    expDate: String,
-    isRemovable: Boolean) {
+fun StageView(context: Context,
+              viewModel: EditRecipeScreenViewModel,
+              num: Int,
+              description: String,
+              expDate: String,
+              isRemovable: Boolean) {
 
     val recipe by viewModel.recipe.observeAsState()
     var number by remember {mutableStateOf(num)}
@@ -87,18 +92,40 @@ fun StageView(
                 )
                 viewModel.finalRecipe.listOfStages[number-1].description = description
             }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text("Дата окончания")
-                Box(
-                    modifier = Modifier
-                        .size(20.dp)
-                        .background(MaterialTheme.colors.onError, RectangleShape)
-                )
-            }
+            StageExpDate(context, viewModel, number)
         }
+}
 
+@Composable
+fun StageExpDate(contex: Context, viewModel: EditRecipeScreenViewModel, stageNum: Int) {
+
+    Row(modifier = Modifier.fillMaxWidth()
+        .wrapContentHeight()
+        .padding(4.dp),
+    horizontalArrangement = Arrangement.SpaceBetween,
+    verticalAlignment = Alignment.CenterVertically) {
+        var dateText by remember { mutableStateOf(SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())) }
+        var descText by remember {mutableStateOf("Дата окончания:")}
+        Text(descText)
+        var cal = Calendar.getInstance()
+        val dateSetListener = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            cal.set(Calendar.YEAR, year)
+            cal.set(Calendar.MONTH, monthOfYear)
+            cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+            val myFormat = "dd.MM.yyyy"
+            val sdf = SimpleDateFormat(myFormat, Locale.US)
+            dateText = sdf.format(cal.time)
+
+        }
+        Button(onClick = {
+            DatePickerDialog(contex, dateSetListener,
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH)).show()}) {
+            Text(dateText)
+        }
+        var t: Date = Date(System.currentTimeMillis())
+        viewModel.collectExpDate(stageNum, dateText)
+    }
 }

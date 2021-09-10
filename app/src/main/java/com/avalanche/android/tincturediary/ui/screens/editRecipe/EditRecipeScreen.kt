@@ -1,12 +1,11 @@
 package com.avalanche.android.tincturediary.ui.screens.editRecipe
 
+import android.content.Context
 import android.util.Log
-import android.widget.CheckBox
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -33,7 +32,7 @@ import java.sql.Wrapper
 
 @ExperimentalFoundationApi
 @Composable
-fun EditRecipeScreen(editRecipeScreenViewModel: EditRecipeScreenViewModel = viewModel()) {
+fun EditRecipeScreen(context: Context, editRecipeScreenViewModel: EditRecipeScreenViewModel = viewModel()) {
 
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -81,7 +80,6 @@ fun EditRecipeScreen(editRecipeScreenViewModel: EditRecipeScreenViewModel = view
                     horizontalArrangement = Arrangement.Center) {
                     Button(onClick = {
                         editRecipeScreenViewModel.addBase()
-                        editRecipeScreenViewModel.baseSizeCounter++
                     } ) {
                         Text("Добавить основу")
                     }
@@ -92,6 +90,7 @@ fun EditRecipeScreen(editRecipeScreenViewModel: EditRecipeScreenViewModel = view
                     for (i in 0 until recipe!!.listOfStages.size) {
                         var isRemovable = if (i == recipe!!.listOfStages.size - 1) false else true
                         StageView(
+                            context,
                             editRecipeScreenViewModel,
                             i + 1,
                             recipe!!.listOfStages!![i].description,
@@ -128,6 +127,7 @@ fun Toolbar(editRecipeScreenViewModel: EditRecipeScreenViewModel) {
             Text("Prev")
         }
         Button(onClick = {
+            editRecipeScreenViewModel.generateRecipeToStore()
             var bases = ""
             for (base in editRecipeScreenViewModel.finalRecipe.listOfAlcoholBase) {
                 bases = bases + base.title + ", "
@@ -140,16 +140,18 @@ fun Toolbar(editRecipeScreenViewModel: EditRecipeScreenViewModel) {
             for (ing in editRecipeScreenViewModel.finalRecipe.listOfStages[1].listOfIngredients) {
                 s2i = s2i + ing.title + ", "
             }
-            var fin = if(editRecipeScreenViewModel.isFinished) "is finished" else "is not finished"
-//            Log.d("ING", "stagemap, s1, ings is ${editRecipeScreenViewModel.stagesMap.value!![1]!![0].title} ${editRecipeScreenViewModel.stagesMap.value!![1]!![1].title} ${editRecipeScreenViewModel.stagesMap.value!![1]!![2].title}")
+            var fin = if(editRecipeScreenViewModel.isRecipeFinished) "is finished" else "is not finished"
+
             Log.d("FINAL", "FINAL Rp: ${editRecipeScreenViewModel.finalRecipe.title} " +
                     "\n has ${editRecipeScreenViewModel.finalRecipe.listOfAlcoholBase.size} alcohol bases:" +
                     "\n $bases." +
                     "\n and ${editRecipeScreenViewModel.finalRecipe.listOfStages.size} stages." +
                     "\n Stage 1 contains: $s1i," +
                     "\n with description: ${editRecipeScreenViewModel.finalRecipe.listOfStages[0].description}" +
+                    "\n and exp.date is ${editRecipeScreenViewModel.finalRecipe.listOfStages[0].expirationDate}." +
                     "\n Stage 2 contains: $s2i," +
-                    "\n with description: ${editRecipeScreenViewModel.finalRecipe.listOfStages[1].description}." +
+                    "\n with description: ${editRecipeScreenViewModel.finalRecipe.listOfStages[1].description}" +
+                    "\n and exp.date is ${editRecipeScreenViewModel.finalRecipe.listOfStages[1].expirationDate}." +
                     "\n This recipe $fin" )
             Log.d("ING", "FINAL ingrs in S1 is $s2i" )
 
@@ -174,6 +176,6 @@ fun isFinished(viewModel: EditRecipeScreenViewModel) {
                 onCheckedChange = { isChecked = it }
             )
         }
-    viewModel.isFinished = isChecked
+    viewModel.isRecipeFinished = isChecked
     }
 

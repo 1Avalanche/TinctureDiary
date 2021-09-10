@@ -12,10 +12,12 @@ import com.avalanche.android.tincturediary.model.RecipePreparation
 import com.avalanche.android.tincturediary.model.Stage
 import com.avalanche.android.tincturediary.ui.components.IngredientView
 import kotlinx.coroutines.delay
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 data class RecipeForSave(
-    var id: Int,
+    var id: UUID,
     var title: String,
     var listOfAlcoholBase: MutableList<AlcoholBase>,
     var listOfStages: MutableList<Stage>,
@@ -28,13 +30,12 @@ class EditRecipeScreenViewModel : ViewModel() {
     var emptyIngredient = Ingredient("", "")
     var emptyStage = Stage(0, listOf(emptyIngredient), "", "")
     val emptyRecipe = RecipePreparation(
-        123, //   TODO  // как задавать автоматический ид?
+        UUID.randomUUID(),
         "",
         mutableListOf(emptyBase),
         mutableListOf(Stage(1, mutableListOf(emptyIngredient), "", "")),
         false
     )
-
 
     var testRecipe1 = testRp()
 
@@ -43,9 +44,9 @@ class EditRecipeScreenViewModel : ViewModel() {
     val recipe: LiveData<RecipePreparation> = _recipe
     val finalRecipe: RecipeForSave = copyRecipe(fullRecipe)
 
-    var baseSizeCounter = recipe.value!!.listOfAlcoholBase.size
+    var isRecipeFinished = false
 
-    var isFinished = false
+    var currentTime = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
 
     private fun copyRecipe(rp: RecipePreparation) : RecipeForSave {
         var baseList: MutableList<AlcoholBase> = mutableListOf()
@@ -137,6 +138,21 @@ class EditRecipeScreenViewModel : ViewModel() {
         var newStage = finalRecipe.listOfStages[stageNum-1].copy(listOfIngredients = newIngrList)
         finalRecipe.listOfStages[stageNum-1] = newStage
     }
+    fun collectExpDate(stageNum: Int, newDate: String) {
+        var newStage = finalRecipe.listOfStages[stageNum-1].copy(expirationDate = newDate)
+        finalRecipe.listOfStages[stageNum-1] = newStage
+    }
+
+    fun generateRecipeToStore() {
+        var basesList: List<AlcoholBase> = finalRecipe.listOfAlcoholBase
+        var stagesList: List<Stage> = finalRecipe.listOfStages
+        var newRecipe = RecipePreparation(
+            finalRecipe.id,
+            finalRecipe.title,
+            basesList,
+            stagesList,
+            isRecipeFinished)
+    }
 
     fun testRp() : RecipePreparation {
         var testBase1 = AlcoholBase("vodka", "100", "40")
@@ -151,7 +167,7 @@ class EditRecipeScreenViewModel : ViewModel() {
         var testStage1 = Stage(1, listOf(testIngr1, testIngr2), testDesc1, "")
         var testStage2 = Stage(2, listOf(testIngr3, testIngr4), testDesc2, "")
         var testRecipe1 = RecipePreparation(
-            456,
+            UUID.randomUUID(),
             "Вишня на спирту",
             listOf(testBase1, testBase2),
             listOf(testStage1, testStage2),
