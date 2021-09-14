@@ -1,21 +1,19 @@
-package com.avalanche.android.tincturediary.ui.screens.editRecipe
+package com.avalanche.android.tincturediary.ui.screens.recipeScreen
 
+import android.app.Application
 import android.util.Log
-import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import com.avalanche.android.tincturediary.database.RecipeDatabase
+import com.avalanche.android.tincturediary.database.RecipeRepository
 import com.avalanche.android.tincturediary.model.AlcoholBase
 import com.avalanche.android.tincturediary.model.Ingredient
 import com.avalanche.android.tincturediary.model.RecipePreparation
 import com.avalanche.android.tincturediary.model.Stage
-import com.avalanche.android.tincturediary.ui.components.IngredientView
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-
+//class for finish pecipe, to store in DB
 data class RecipeForSave(
     var id: UUID,
     var title: String,
@@ -24,8 +22,16 @@ data class RecipeForSave(
     var isFinished: Boolean,
 )
 
-class EditRecipeScreenViewModel : ViewModel() {
+//This view model class for 2 screens = AddScreen and EditScreen.
+class RecipeScreenViewModel(application: Application) : AndroidViewModel(application) {
 
+    private val repository: RecipeRepository
+    init {
+        val recipeDao = RecipeDatabase.getDatabase(application).recipeDao()
+        repository = RecipeRepository(recipeDao)
+    }
+
+        //empty components
     var emptyBase = AlcoholBase("", "", "")
     var emptyIngredient = Ingredient("", "")
     var emptyStage = Stage(0, listOf(emptyIngredient), "", "")
@@ -37,16 +43,43 @@ class EditRecipeScreenViewModel : ViewModel() {
         false
     )
 
-    var testRecipe1 = testRp()
+        //Data retrieval from DB
+    val allRecipiesLivaData = repository.allRecipies
+    val idLiveData: MutableLiveData<UUID> = MutableLiveData()
+    val recipeLiveData: LiveData<RecipePreparation> =
+        Transformations.switchMap(idLiveData) { recipeID ->
+            repository.getOneRecipe(recipeID)
+        }
 
-    val fullRecipe = testRecipe1
+
+    var fullRecipe = emptyRecipe //Start recipe. May be empty of test recipe.
     val _recipe: MutableLiveData<RecipePreparation> = MutableLiveData(fullRecipe)
     val recipe: LiveData<RecipePreparation> = _recipe
-    val finalRecipe: RecipeForSave = copyRecipe(fullRecipe)
+    var finalRecipe: RecipeForSave = copyRecipe(recipe.value!!) //recipe to collect and save changes
+
+        //LiveData change when Screen send a new ID, and view model refresh recipe to observe
+    val _recipeRefreshed: MutableLiveData<Boolean> = MutableLiveData(false)
+    val recipeRefreshed: LiveData<Boolean> = _recipeRefreshed
 
     var isRecipeFinished = false
 
-    var currentTime = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+//    var currentTime = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+
+    fun takeNewId(id: UUID) {
+        idLiveData.postValue(id)
+    }
+
+    var callCounter = 0 // this fun make call one time for one screen
+    fun refreshVM(rp: RecipePreparation)  {
+        if (callCounter > 0) {
+            return
+        }
+        _recipe.postValue(rp)
+        fullRecipe = rp.copy()
+        finalRecipe = copyRecipe(rp)
+        _recipeRefreshed.postValue(true)
+        callCounter++
+    }
 
     private fun copyRecipe(rp: RecipePreparation) : RecipeForSave {
         var baseList: MutableList<AlcoholBase> = mutableListOf()
@@ -92,7 +125,7 @@ class EditRecipeScreenViewModel : ViewModel() {
     }
 
     fun removeStage() {
-        finalRecipe.listOfAlcoholBase.removeAt(finalRecipe.listOfAlcoholBase.lastIndex)
+        finalRecipe.listOfStages.removeAt(finalRecipe.listOfStages.lastIndex)
         val tempList: MutableList<Stage> = mutableListOf()
         tempList.addAll(recipe.value!!.listOfStages)
         tempList.removeLast()
@@ -138,12 +171,14 @@ class EditRecipeScreenViewModel : ViewModel() {
         var newStage = finalRecipe.listOfStages[stageNum-1].copy(listOfIngredients = newIngrList)
         finalRecipe.listOfStages[stageNum-1] = newStage
     }
+
     fun collectExpDate(stageNum: Int, newDate: String) {
         var newStage = finalRecipe.listOfStages[stageNum-1].copy(expirationDate = newDate)
         finalRecipe.listOfStages[stageNum-1] = newStage
     }
 
-    fun generateRecipeToStore() {
+    //Take recipe to store (finalRecipe) and save it as @Entity type
+    private fun generateRecipeToStore() : RecipePreparation {
         var basesList: List<AlcoholBase> = finalRecipe.listOfAlcoholBase
         var stagesList: List<Stage> = finalRecipe.listOfStages
         var newRecipe = RecipePreparation(
@@ -152,7 +187,18 @@ class EditRecipeScreenViewModel : ViewModel() {
             basesList,
             stagesList,
             isRecipeFinished)
+        return newRecipe
     }
+
+    //insert to DB
+    fun insertRp() {
+        val recipeToStore = generateRecipeToStore()
+        viewModelScope.launch {
+            repository.insertRecipe(recipeToStore)
+        }
+    }
+
+    //TEST
 
     fun testRp() : RecipePreparation {
         var testBase1 = AlcoholBase("vodka", "100", "40")
@@ -176,3 +222,4 @@ class EditRecipeScreenViewModel : ViewModel() {
         return testRecipe1
     }
 }
+

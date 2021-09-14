@@ -1,6 +1,5 @@
 package com.avalanche.android.tincturediary.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
@@ -10,15 +9,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.avalanche.android.tincturediary.model.Ingredient
-import com.avalanche.android.tincturediary.ui.screens.editRecipe.EditRecipeScreenViewModel
+import com.avalanche.android.tincturediary.ui.screens.recipeScreen.RecipeScreenViewModel
 
 @Composable
 fun IngredientView(
-    viewModel: EditRecipeScreenViewModel = viewModel(),
+    viewModel: RecipeScreenViewModel = viewModel(),
     title: String,
     weight: String,
     stageNum: Int,

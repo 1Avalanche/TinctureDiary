@@ -3,27 +3,22 @@ package com.avalanche.android.tincturediary.ui.components
 import android.app.DatePickerDialog
 import android.content.Context
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import com.avalanche.android.tincturediary.model.Ingredient
 import com.avalanche.android.tincturediary.model.RecipePreparation
-import com.avalanche.android.tincturediary.model.Stage
-import com.avalanche.android.tincturediary.ui.screens.editRecipe.EditRecipeScreenViewModel
-import com.avalanche.android.tincturediary.ui.components.IngredientView
-import com.avalanche.android.tincturediary.ui.components.DatePickerView
+import com.avalanche.android.tincturediary.ui.screens.recipeScreen.RecipeScreenViewModel
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
 fun StageView(context: Context,
-              viewModel: EditRecipeScreenViewModel,
+              viewModel: RecipeScreenViewModel,
               num: Int,
               description: String,
               expDate: String,
@@ -40,12 +35,14 @@ fun StageView(context: Context,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
             Text("Фаза $num")
+            if (isRemovable || number > 1) {
                 Button(
                     onClick = { viewModel.removeStage() },
                     enabled = isRemovable
                 ) {
                     Text("X")
                 }
+            }
             }
             Divider(
                 thickness = 0.5.dp,
@@ -97,9 +94,10 @@ fun StageView(context: Context,
 }
 
 @Composable
-fun StageExpDate(contex: Context, viewModel: EditRecipeScreenViewModel, stageNum: Int) {
+fun StageExpDate(contex: Context, viewModel: RecipeScreenViewModel, stageNum: Int) {
 
-    Row(modifier = Modifier.fillMaxWidth()
+    Row(modifier = Modifier
+        .fillMaxWidth()
         .wrapContentHeight()
         .padding(4.dp),
     horizontalArrangement = Arrangement.SpaceBetween,

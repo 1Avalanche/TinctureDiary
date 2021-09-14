@@ -1,28 +1,24 @@
 package com.avalanche.android.tincturediary
 
-import android.app.DatePickerDialog
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.avalanche.android.tincturediary.ui.screens.editRecipe.EditRecipeScreen
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.avalanche.android.tincturediary.ui.components.Id
+import com.avalanche.android.tincturediary.ui.screens.cookBookScreen.CookBook
+import com.avalanche.android.tincturediary.ui.screens.listRecipeScreen.ListRecipeScreen
+import com.avalanche.android.tincturediary.ui.screens.recipeScreen.AddScreen
+import com.avalanche.android.tincturediary.ui.screens.recipeScreen.EditScreen
 import com.avalanche.android.tincturediary.ui.theme.TinctureDiaryTheme
-import java.text.SimpleDateFormat
-import java.util.*
 
 class MainActivity : ComponentActivity() {
     @ExperimentalFoundationApi
@@ -32,13 +28,41 @@ class MainActivity : ComponentActivity() {
         setContent {
             TinctureDiaryTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-                    EditRecipeScreen(context)
+                val navController = rememberNavController()
+                val bottomItems = listOf("list", "add", "cookbook")
+
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    Scaffold(bottomBar = {
+                        BottomNavigation {
+                            bottomItems.forEach {screen ->
+                                BottomNavigationItem(
+                                    selected = false ,
+                                    onClick = { navController.navigate(screen) },
+                                    label = { Text(screen) },
+                                    icon = {})
+                            }
+                        }
+                    }) { NavHost(navController = navController,  startDestination = "cookbook") {
+                            composable("cookbook") { Text("cookbook")}
+                            composable("list") { ListRecipeScreen(context = context, navController)}
+                            composable("add") { AddScreen(context = context)}
+                            composable("edit") {
+                                navController.previousBackStackEntry?.arguments?.getParcelable<Id>("TAKE_ID")?.let{
+                                    EditScreen(context = context, id = it.value)
+                                    Log.d("LOAD", "NavHost take road: edit")
+                                }
+                            }
+                            Log.d("LOAD", "NavHost loaded")
+                        }
+                    }
+
                 }
+
             }
         }
     }
 }
+
 
 
 @Composable

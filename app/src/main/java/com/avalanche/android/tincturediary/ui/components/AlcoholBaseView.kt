@@ -12,11 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.avalanche.android.tincturediary.ui.screens.editRecipe.EditRecipeScreenViewModel
+import com.avalanche.android.tincturediary.ui.screens.recipeScreen.RecipeScreenViewModel
 
 @Composable
 fun AlcoholBaseView(
-    viewModel: EditRecipeScreenViewModel = viewModel(),
+    viewModel: RecipeScreenViewModel = viewModel(),
     title: String,
     vol: String,
     str: String,

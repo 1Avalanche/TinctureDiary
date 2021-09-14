@@ -1,15 +1,16 @@
-package com.avalanche.android.tincturediary.database
+package com.avalanche.android.tincturediary.database.dao
 
 import android.content.IntentSender
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.avalanche.android.tincturediary.model.RecipePreparation
+import java.util.*
 
 @Dao
 interface RecipeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addRecipe(recipe: RecipePreparation)
+    suspend fun insertRecipe(recipe: RecipePreparation)
 
     @Update
     suspend fun updateRecipe(recipe: RecipePreparation)
@@ -21,7 +22,7 @@ interface RecipeDao {
     fun getAllRecipies() : LiveData<List<RecipePreparation>>
 
     @Query("SELECT * FROM RecipePreparation WHERE id=(:id)")
-    fun getOneRecipe(id: Int) : LiveData<RecipePreparation>?
+    fun getOneRecipe(id: UUID) : LiveData<RecipePreparation>
 
     @Query("SELECT * FROM RecipePreparation WHERE isFinished=(:isFinished)")
     fun getNotFinishedRecipe(isFinished: Boolean) : LiveData<List<RecipePreparation>>?
