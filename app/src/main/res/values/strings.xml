@@ -18,11 +18,13 @@
     <string name="exp_date">Дата окончания: </string>
 
     <string name="ingredients">Ингредиенты</string>
-    <string name="add_ingredient">Добавить ингредиент</string>
-    <string name="description">Описание</string>
     <string name="alcohol_base">Алкогольная основа</string>
+    <string name="stage">Стадия</string>
+    <string name="add_ingredient">Добавить ингредиент</string>
     <string name="add_base">Добавить основу</string>
-    <string name="add_stage">Добавить фазу</string>
+    <string name="add_stage">Добавить стадию</string>
+    <string name="description">Описание</string>
+
 
     <string name="recipes_loading">Рецепты загружаются</string>
     <string name="no_finished_recipes">Законченных рецептов пока что нет</string>

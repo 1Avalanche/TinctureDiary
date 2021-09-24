@@ -28,7 +28,6 @@ import java.util.*
 @Composable
 fun EditScreen(context: Context, id: UUID, viewModel: RecipeScreenViewModel = viewModel()) {
 
-    Log.d("LOAD", "EditScreen loaded")
     val uuid by remember { mutableStateOf(id) }
     viewModel.takeNewId(uuid)
     val recipeFromDB by viewModel.recipeLiveData.observeAsState()
@@ -37,7 +36,6 @@ fun EditScreen(context: Context, id: UUID, viewModel: RecipeScreenViewModel = vi
     if (counter && (recipeFromDB != null)) {
         viewModel.refreshVM(recipeFromDB!!)
         counter = false //fun can call one time
-        Log.d("LOAD", "EditScreen fun to refresh called")
     }
 
     val recipeRefreshed by viewModel.recipeRefreshed.observeAsState()
@@ -48,7 +46,7 @@ fun EditScreen(context: Context, id: UUID, viewModel: RecipeScreenViewModel = vi
 
         if (recipeRefreshed!!) {
 
-            Log.d("LOAD", "Column call'd")
+            Log.d("ROUTE", "Column call'd")
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize()

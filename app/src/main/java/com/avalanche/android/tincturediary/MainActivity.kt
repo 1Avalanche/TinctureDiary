@@ -29,7 +29,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             TinctureDiaryTheme {
                 val navController = rememberNavController()
-                val bottomItems = listOf(R.string.nav_list, R.string.nav_add, R.string.nav_cookbook)
+
+                val bottomItems = listOf("list", "add", "cookbook")
 
                 Surface(modifier = Modifier.fillMaxSize()) {
                     Scaffold(bottomBar = {
@@ -38,6 +39,7 @@ class MainActivity : ComponentActivity() {
                                 BottomNavigationItem(
                                     selected = false ,
                                     onClick = { navController.navigate(screen) },
+                                    label = { Text(screen) },
                                     icon = {})
                             }
                         }
