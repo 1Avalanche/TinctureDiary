@@ -8,9 +8,11 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.avalanche.android.tincturediary.R
 import com.avalanche.android.tincturediary.ui.screens.recipeScreen.RecipeScreenViewModel
 
 @Composable
@@ -37,7 +39,7 @@ fun IngredientView(
                 modifier = Modifier
                     .weight(0.6f)
                     .padding(4.dp),
-                placeholder = { Text("название") }
+                placeholder = { Text(text = stringResource(id = R.string.title)) }
             )
             TextField(
                 value = weightValue,
@@ -46,7 +48,7 @@ fun IngredientView(
                 modifier = Modifier
                     .weight(0.25f)
                     .padding(4.dp),
-                placeholder = { Text("вес") }
+                placeholder = { Text(text = stringResource(id = R.string.weight)) }
             )
         if (isRemovable) {
             Button(onClick = {

@@ -9,7 +9,9 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.avalanche.android.tincturediary.R
 import com.avalanche.android.tincturediary.model.RecipePreparation
 import com.avalanche.android.tincturediary.ui.screens.recipeScreen.RecipeScreenViewModel
 import kotlinx.coroutines.delay
@@ -34,7 +36,7 @@ fun StageView(context: Context,
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-            Text("Фаза $num")
+            Text(text = stringResource(id = R.string.stage) +"$num")
             if (isRemovable || number > 1) {
                 Button(
                     onClick = { viewModel.removeStage() },
@@ -49,7 +51,7 @@ fun StageView(context: Context,
                 color = MaterialTheme.colors.secondaryVariant
             )
 
-            Text("Ингредиенты")
+            Text(text = stringResource(id = R.string.ingredients))
             Column(modifier = Modifier.fillMaxWidth()) {
                 for (i in 0 until recipe!!.listOfStages[number-1].listOfIngredients.size) {
                     var isRemovable = if (i == recipe!!.listOfStages[number-1].listOfIngredients.size - 1) true else false
@@ -70,10 +72,10 @@ fun StageView(context: Context,
                 Button(onClick = {
                     viewModel.addIngr(number)
                 }) {
-                    Text("Добавить ингредиент")
+                    Text(text = stringResource(id = R.string.add_ingredient))
                 }
             }
-            Text("Описание")
+            Text(text = stringResource(id = R.string.description))
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -85,7 +87,7 @@ fun StageView(context: Context,
                     modifier = Modifier
                         .weight(1f)
                         .padding(4.dp),
-                    placeholder = { Text("введите описание приготовления") }
+                    placeholder = { Text(text = stringResource(id = R.string.placeh_entry_description)) }
                 )
                 viewModel.finalRecipe.listOfStages[number-1].description = description
             }
@@ -103,8 +105,7 @@ fun StageExpDate(contex: Context, viewModel: RecipeScreenViewModel, stageNum: In
     horizontalArrangement = Arrangement.SpaceBetween,
     verticalAlignment = Alignment.CenterVertically) {
         var dateText by remember { mutableStateOf(SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())) }
-        var descText by remember {mutableStateOf("Дата окончания:")}
-        Text(descText)
+        Text(text = stringResource(id = R.string.exp_date))
         var cal = Calendar.getInstance()
         val dateSetListener = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
             cal.set(Calendar.YEAR, year)

@@ -13,8 +13,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.avalanche.android.tincturediary.R
 import com.avalanche.android.tincturediary.model.RecipePreparation
 import com.avalanche.android.tincturediary.ui.components.AlcoholBaseView
 import com.avalanche.android.tincturediary.ui.components.IsFinished
@@ -82,7 +84,7 @@ fun EditToolbar(viewModel: RecipeScreenViewModel) {
         Button(onClick = {/*TODO*/ }) {
             Text("Prev")
         }
-        Text("Редактирование рецепта")
+        Text(text = stringResource(id = R.string.edit_recipe))
         Button(onClick = {
             viewModel.insertRp()
         })
@@ -102,7 +104,7 @@ fun Title(viewModel: RecipeScreenViewModel) {
         readOnly = true,
         onValueChange = { text = it
         },
-        label = { Text("Название") } )
+        label = { Text(text = stringResource(id = R.string.title)) } )
     viewModel.finalRecipe.title = text
 }
 
@@ -113,7 +115,7 @@ fun AlcoholBase(viewModel: RecipeScreenViewModel) {
 
     Row(verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start) {
-        Text("Спиртовая основа")
+        Text(text = stringResource(id = R.string.alcohol_base))
     }
 
     for (i in 0 until recipe!!.listOfAlcoholBase.size) {
@@ -133,7 +135,7 @@ fun AlcoholBase(viewModel: RecipeScreenViewModel) {
         Button(onClick = {
             viewModel.addBase()
         } ) {
-            Text("Добавить основу")
+            Text(text = stringResource(id = R.string.add_base))
         }
     }
 }
@@ -162,7 +164,7 @@ fun Stages(context: Context, viewModel: RecipeScreenViewModel) {
         Button(onClick = {
             viewModel.addStage()
         } ) {
-            Text("Добавить фазу")
+            Text(text = stringResource(id = R.string.add_stage))
         }
     }
 }

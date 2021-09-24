@@ -14,6 +14,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -31,7 +32,7 @@ fun ListRecipeScreen(context: Context, navController: NavController, viewModel: 
     Surface(modifier = Modifier.fillMaxSize()) {
             Box() {
                 if (notFinishedRecipies == null || notFinishedRecipies!!.isEmpty()) {
-                    Text("Готовящихся напитков нет")
+                    Text(text = stringResource(id = R.string.no_notfinished_recepies))
                 } else {
                     LazyColumn(
                         content = {

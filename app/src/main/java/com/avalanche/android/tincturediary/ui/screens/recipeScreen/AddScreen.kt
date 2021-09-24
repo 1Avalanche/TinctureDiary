@@ -13,8 +13,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.avalanche.android.tincturediary.R
 import com.avalanche.android.tincturediary.ui.components.AlcoholBaseView
 import com.avalanche.android.tincturediary.ui.components.IsFinished
 import com.avalanche.android.tincturediary.ui.components.StageView
@@ -43,13 +45,13 @@ fun AddScreen(context: Context, viewModel: RecipeScreenViewModel = viewModel()) 
                     value = text,
                     onValueChange = { text = it
                     },
-                    label = { Text("Название") } )
+                    label = { Text(text = stringResource(id = R.string.title)) } )
                 viewModel.finalRecipe.title = text
             }
             item {
                 Row(verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start) {
-                    Text("Спиртовая основа")
+                    Text(text = stringResource(id = R.string.alcohol_base))
                 }
             }
             item{
@@ -71,7 +73,7 @@ fun AddScreen(context: Context, viewModel: RecipeScreenViewModel = viewModel()) 
                     Button(onClick = {
                         viewModel.addBase()
                     } ) {
-                        Text("Добавить основу")
+                        Text(text = stringResource(id = R.string.add_base))
                     }
                 }
             }
@@ -96,7 +98,7 @@ fun AddScreen(context: Context, viewModel: RecipeScreenViewModel = viewModel()) 
                     Button(onClick = {
                         viewModel.addStage()
                     } ) {
-                        Text("Добавить фазу")
+                        Text(text = stringResource(id = R.string.add_stage))
                     }
                 }
             }

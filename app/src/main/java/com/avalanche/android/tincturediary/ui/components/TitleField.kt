@@ -7,6 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
+import com.avalanche.android.tincturediary.R
 
 @Composable
 fun TitleField(text: String) {
@@ -15,6 +17,6 @@ fun TitleField(text: String) {
     OutlinedTextField(
         value = text,
         onValueChange = { text = it },
-        label = { Text("Название") } )
+        label = { Text(text = stringResource(id = R.string.title)) } )
 
 }

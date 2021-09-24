@@ -17,6 +17,7 @@ class RecipeRepository (private val recipeDao: RecipeDao)  {
 
     val allRecipies: LiveData<List<RecipePreparation>> = recipeDao.getAllRecipies()
     val allNotFinishedRecipies: LiveData<List<RecipePreparation>>? = recipeDao.getNotFinishedRecipe(false)
+    val allFinishedRecipies: LiveData<List<RecipePreparation>>? = recipeDao.getNotFinishedRecipe(true)
 
     @Suppress
     @WorkerThread

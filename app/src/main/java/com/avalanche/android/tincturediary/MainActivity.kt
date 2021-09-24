@@ -13,9 +13,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.avalanche.android.tincturediary.ui.components.Id
-import com.avalanche.android.tincturediary.ui.screens.cookBookScreen.CookBook
+import com.avalanche.android.tincturediary.model.Id
+import com.avalanche.android.tincturediary.ui.screens.cookBookScreen.CookBookScreen
 import com.avalanche.android.tincturediary.ui.screens.listRecipeScreen.ListRecipeScreen
+import com.avalanche.android.tincturediary.ui.screens.readyRecipeScreen.ReadyRecipeScreen
 import com.avalanche.android.tincturediary.ui.screens.recipeScreen.AddScreen
 import com.avalanche.android.tincturediary.ui.screens.recipeScreen.EditScreen
 import com.avalanche.android.tincturediary.ui.theme.TinctureDiaryTheme
@@ -27,9 +28,8 @@ class MainActivity : ComponentActivity() {
         var context = this
         setContent {
             TinctureDiaryTheme {
-                // A surface container using the 'background' color from the theme
                 val navController = rememberNavController()
-                val bottomItems = listOf("list", "add", "cookbook")
+                val bottomItems = listOf(R.string.nav_list, R.string.nav_add, R.string.nav_cookbook)
 
                 Surface(modifier = Modifier.fillMaxSize()) {
                     Scaffold(bottomBar = {
@@ -38,21 +38,31 @@ class MainActivity : ComponentActivity() {
                                 BottomNavigationItem(
                                     selected = false ,
                                     onClick = { navController.navigate(screen) },
-                                    label = { Text(screen) },
                                     icon = {})
                             }
                         }
                     }) { NavHost(navController = navController,  startDestination = "cookbook") {
-                            composable("cookbook") { Text("cookbook")}
+                        Log.d("ROUTE", "NavHost initializing")
                             composable("list") { ListRecipeScreen(context = context, navController)}
+                            composable("cookbook") { CookBookScreen(navController) }
                             composable("add") { AddScreen(context = context)}
                             composable("edit") {
-                                navController.previousBackStackEntry?.arguments?.getParcelable<Id>("TAKE_ID")?.let{
-                                    EditScreen(context = context, id = it.value)
-                                    Log.d("LOAD", "NavHost take road: edit")
+                                if (navController.previousBackStackEntry != null && navController.previousBackStackEntry?.arguments != null) {
+                                    navController.previousBackStackEntry!!.arguments!!.getParcelable<Id>("TAKE_ID")?.let{
+                                        EditScreen(context = context, id = it.value)
+                                    }
+                                }
+
+                            }
+                            composable("readyRecipe") {
+                                Log.d("ROUTE", "NavHost ready")
+                                if (navController.previousBackStackEntry != null && navController.previousBackStackEntry?.arguments != null) {
+                                    navController.previousBackStackEntry!!.arguments!!.getParcelable<Id>("TAKE_ID")?.let{
+                                        ReadyRecipeScreen(id = it.value)
+                                        Log.d("ROUTE", "NavHost take a link")
+                                    }
                                 }
                             }
-                            Log.d("LOAD", "NavHost loaded")
                         }
                     }
 

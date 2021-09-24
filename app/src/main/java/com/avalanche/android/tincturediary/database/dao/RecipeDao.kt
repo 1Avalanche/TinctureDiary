@@ -27,4 +27,7 @@ interface RecipeDao {
     @Query("SELECT * FROM RecipePreparation WHERE isFinished=(:isFinished)")
     fun getNotFinishedRecipe(isFinished: Boolean) : LiveData<List<RecipePreparation>>?
 
+    @Query("SELECT * FROM RecipePreparation WHERE isFinished=(:isFinished)")
+    fun getFinishedRecipe(isFinished: Boolean) : LiveData<List<RecipePreparation>>?
+
 }
